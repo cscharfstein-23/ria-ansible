@@ -1,0 +1,21 @@
+#SPDX-License-Identifier: MIT-0
+---
+# defaults file for ria-demo
+ansible_user: ubuntu
+instance_name: "test123"
+
+# INSTANA
+instana_namespace: instana-agent
+instana_repo_name: instana-agent
+instana_repo_url: https://agents.instana.io/helm
+instana_agent_key: "XXX"
+instana_download_key: "XXX"
+instana_endpoint_host: "ingress-orange-saas.instana.io"
+instana_zone_name: "SUPER-RIA-DEMO"
+instana_cluster_name: "SUPER-RIA-DEMO-{{ instance_name }}"
+
+# QOTD
+qotd_repo_url: "https://gitlab.com/api/v4/projects/26143345/packages/helm/stable"
+qotd_repo_name: "qotd"
+qotd_namespace: "qotd"
+

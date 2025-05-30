@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argocd
+---
+# Install ArgoCD core components
+# This will install latest version from official manifests
+# For production, pin versions
+# Docs: https://argo-cd.readthedocs.io/en/stable/getting_started/
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: install-argocd
+  namespace: argocd
+spec:
+  template:
+    spec:
+      containers:
+        - name: install
+          image: bitnami/kubectl
+          command:
+            - /bin/sh
+            - -c
+            - |
+              kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+      restartPolicy: Never
+  backoffLimit: 1

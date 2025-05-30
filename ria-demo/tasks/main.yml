@@ -1,0 +1,34 @@
+#SPDX-License-Identifier: MIT-0
+---
+# tasks file for ria-demo
+
+- name: Install dependencies
+  ansible.builtin.include_tasks:
+    file: setup_deps.yaml
+
+- name: Include K3S Setup
+  ansible.builtin.include_tasks:
+    file: setup_k3s.yaml
+    apply:
+      tags:
+        - k3s
+  tags:
+    - k3s
+
+- name: Include Instana Agent Setup
+  ansible.builtin.include_tasks:
+    file: setup_instana_agent.yaml
+    apply:
+      tags:
+        - instana
+  tags:
+    - instana
+
+- name: Include Deployment of Qotd App
+  ansible.builtin.include_tasks:
+    file: setup_deploy_qotd.yaml
+    apply:
+      tags:
+        - qotd
+  tags:
+    - qotd

@@ -1,0 +1,23 @@
+- name: Add Helm-Repo for Instana
+  ansible.builtin.shell: |
+    helm repo add {{ instana_repo_name }} {{ instana_repo_url }}
+
+- name: Update Helm-Repos
+  ansible.builtin.shell: |
+    helm repo update
+
+- name: Install Instana Agent with Helm
+  ansible.builtin.shell: |
+    helm install {{ instana_repo_name }} \
+    --repo {{ instana_repo_url }} \
+    --namespace {{ instana_namespace }} \
+    --create-namespace \
+    --set agent.key={{ instana_agent_key }} \
+    --set agent.downloadKey={{ instana_download_key }} \
+    --set agent.endpointHost={{ instana_endpoint_host }} \
+    --set agent.endpointPort=443 \
+    --set zone.name={{ instana_zone_name }} \
+    --set cluster.name="{{ instana_cluster_name }}" \
+    instana-agent
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

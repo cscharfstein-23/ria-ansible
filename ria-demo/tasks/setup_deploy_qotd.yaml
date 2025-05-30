@@ -1,0 +1,25 @@
+# Deployment of the App Quote of the Day: https://gitlab.com/quote-of-the-day/quote-of-the-day/
+- name: Add Helm-Repo for Qotd
+  ansible.builtin.shell: |
+    helm repo add {{ qotd_repo_name }} {{ qotd_repo_url }}
+
+- name: Update Helm-Repos
+  ansible.builtin.shell: |
+    helm repo update
+
+- name: Create needed namespaces
+  ansible.builtin.shell: |
+    kubectl create namespace {{ qotd_namespace }}
+    kubectl create namespace {{ qotd_namespace }}-load
+
+- name: Install Quote of the day with Helm
+  ansible.builtin.shell: |
+    helm install {{ qotd_repo_name }} \
+    --namespace {{ qotd_namespace }} \
+    --repo {{ qotd_repo_url }} \
+    --set host={{ instance_name }} \
+    --set enableInstana=true \
+    --set useNodePort=true \
+    qotd
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

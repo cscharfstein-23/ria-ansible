@@ -1,0 +1,6 @@
+- name: Setup RIA Demo Cluster
+  hosts: all
+  become: true
+
+  roles:
+    - ria-demo
