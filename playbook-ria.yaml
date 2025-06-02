@@ -7,12 +7,9 @@
         name: ec2_target
         ansible_host: "{{ ec2_ip }}"
         ansible_user: ubuntu
-        groups: ec2_dynamic_group
-
-    - meta: flush_hosts
 
 - name: Setup RIA Demo Cluster
-  hosts: ec2_dynamic_group
+  hosts: ec2_target
   become: true
 
   roles:
