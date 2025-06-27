@@ -2,7 +2,7 @@
 ---
 # defaults file for ria-demo
 ansible_user: ubuntu
-instance_name: "test123"
+instance_name: "mhaecker-fmqa"
 
 # INSTANA
 instana_namespace: instana-agent
@@ -19,3 +19,39 @@ qotd_repo_url: "https://gitlab.com/api/v4/projects/26143345/packages/helm/stable
 qotd_repo_name: "qotd"
 qotd_namespace: "qotd"
 
+# HCM
+palmctl_file_name: palmctl_latest_amd64.deb
+palmctl_download_url: "https://github.com/IBM/palmctl/releases/latest/download/{{ palmctl_file_name }}"
+palmctl_local_path: "/tmp"
+hcm_agent_namespace: "hcm"
+hcm_storage_class: "local-path"
+hcm_agent_name: "hcm-{{ instance_name }}"
+mesh_api_key: "XXXX"
+mesh_endpoint_url: "https://app.hybridcloudmesh.ibm.com"
+
+# Networksegment
+hcm_network_segment_name: "{{ instana_zone_name }}"
+hcm_service_sync_value: true
+
+# Cloud
+hcm_cloud_name: "SUPER-RIA-DEMO"
+hcm_cloud_type: "other"
+hcm_cloud_is_private: true
+
+# Location
+hcm_location_name: "LOCATION-{{ hcm_cloud_name }}"
+hcm_location_type: "region"
+hcm_location_is_multi_zone: false
+hcm_location_city: "Frankfurt am Main"
+hcm_location_region: "Hessen"
+hcm_location_country: "Germany"
+hcm_location_geo_code: "8.6821,50.1109"
+
+# Cluster
+hcm_cluster_name: "{{ instana_cluster_name }}"
+hcm_cluster_type: "K8S"
+hcm_cluster_is_multi_zone: false
+hcm_cluster_auto_discover: false
+
+# Namespace (nur bei hcm_cluster_auto_discover: false)
+hcm_cluster_namespace: "{{ qotd_namespace }}"

@@ -5,6 +5,11 @@
 - name: Install dependencies
   ansible.builtin.include_tasks:
     file: setup_deps.yaml
+    apply:
+      tags:
+        - deps
+  tags:
+    - deps
 
 - name: Include K3S Setup
   ansible.builtin.include_tasks:
@@ -32,3 +37,21 @@
         - qotd
   tags:
     - qotd
+
+- name: Include HCM Agent Setup
+  ansible.builtin.include_tasks:
+    file: setup_hcm_agent.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm
+
+- name: Include HCM Backend Setup
+  ansible.builtin.include_tasks:
+    file: setup_hcm_backend.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm

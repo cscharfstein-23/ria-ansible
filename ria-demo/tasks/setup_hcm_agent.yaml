@@ -1,0 +1,65 @@
+- name: Download palmctl .deb package
+  ansible.builtin.get_url:
+    url: "{{ palmctl_download_url }}"
+    dest: "{{ palmctl_local_path }}"
+    mode: '0644'
+    force: true
+
+- name: Install palmctl .deb package
+  ansible.builtin.apt:
+    deb: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
+    state: present
+    update_cache: false
+
+- name: Check palmctl version
+  ansible.builtin.shell: palmctl --version
+  register: version_result
+  changed_when: false
+
+- name: Display palmctl version
+  ansible.builtin.debug:
+    msg: "Installed palmctl version: {{ version_result.stdout }}"
+
+- name: Configure palmctl user token (Mesh API key)
+  ansible.builtin.shell: |
+    palmctl config user --token {{ mesh_api_key }}
+  register: palmctl_config_user
+  changed_when: "'Successfully configured' in palmctl_config_user.stdout or palmctl_config_user.rc == 0"
+
+- name: Configure palmctl endpoint
+  ansible.builtin.shell: |
+    palmctl config endpoint --url {{ mesh_endpoint_url }}
+  register: palmctl_config_endpoint
+  changed_when: "'Successfully configured' in palmctl_config_endpoint.stdout or palmctl_config_endpoint.rc == 0"
+
+
+# Continue setup on kubernetes
+- name: Ensure agent namespace exists
+  ansible.builtin.shell: |
+    kubectl create namespace {{ qotd_namespace }}
+  register: ns_result
+  failed_when: "'AlreadyExists' not in ns_result.stderr and ns_result.rc != 0"
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Set current kubectl context to target namespace
+  ansible.builtin.shell: |
+    kubectl config set-context --current --namespace={{ qotd_namespace }}
+  register: set_context_result
+  changed_when: "'set' in set_context_result.stdout"
+
+- name: Install Mesh Agent with palmctl
+  ansible.builtin.shell: |
+    palmctl install openhorizon \
+      --name {{ hcm_agent_name }} \
+      --namespace {{ qotd_namespace }} \
+      --storage-class {{ hcm_storage_class }} \
+      -d {{ palmctl_local_path }} \
+      -y
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+  register: install_result
+
+- name: Show palmctl output
+  ansible.builtin.debug:
+    msg: "{{ install_result.stdout }}"

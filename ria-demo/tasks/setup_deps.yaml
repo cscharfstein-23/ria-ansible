@@ -3,6 +3,7 @@
     name:
       - curl
       - sudo
+      - jq
     state: present
     update_cache: true
 
