@@ -5,6 +5,10 @@ ansible_user: ubuntu
 instance_name: "cayo123"
 location: ""
 
+# K3S Traefik
+traefik_http_port: 30080
+traefik_https_port: 30443
+
 # Web App
 service_type: "backend" # frontend / backend
 app_namespace: "hello-world"
