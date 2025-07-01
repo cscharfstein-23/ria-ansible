@@ -7,6 +7,7 @@
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 - name: Backend Setup
+  when: service_type == 'backend'
   block:
     - name: Create backend deployment
       ansible.builtin.shell: |
