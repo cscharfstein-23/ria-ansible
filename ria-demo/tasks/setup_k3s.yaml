@@ -43,21 +43,18 @@
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
+- name: Copy traefik.yaml to target
+  ansible.builtin.copy:
+    src: files/traefik.yaml
+    dest: /tmp/traefik.yaml
+    mode: '0644'
+
 - name: Install Traefik via Helm with fixed NodePorts
   ansible.builtin.shell: |
-    helm install traefik traefik/traefik \
+    helm upgrade --install traefik traefik/traefik \
       --namespace kube-system \
       --create-namespace \
-      --set service.type=NodePort \
-      --set service.ports.web.nodePort={{ traefik_http_port }} \
-      --set service.ports.websecure.nodePort={{ traefik_https_port }} \
+      -f /tmp/traefik.yaml \
       --wait
-  args:
-    creates: /etc/traefik_installed.marker
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-    
-- name: Mark Traefik as installed
-  file:
-    path: /etc/traefik_installed.marker
-    state: touch
