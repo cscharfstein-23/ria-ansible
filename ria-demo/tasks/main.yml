@@ -31,12 +31,12 @@
 
 - name: Include Deployment of Qotd App
   ansible.builtin.include_tasks:
-    file: setup_deploy_qotd.yaml
+    file: setup_deploy_example_app.yaml
     apply:
       tags:
-        - qotd
+        - webapp
   tags:
-    - qotd
+    - webapp
 
 - name: Include HCM Agent Setup
   ansible.builtin.include_tasks:

@@ -2,7 +2,12 @@
 ---
 # defaults file for ria-demo
 ansible_user: ubuntu
-instance_name: "mhaecker-fmqa"
+instance_name: "cayo123"
+location: ""
+
+# Web App
+service_type: "backend" # frontend / backend
+app_namespace: "hello-world"
 
 # INSTANA
 instana_namespace: instana-agent
@@ -34,12 +39,13 @@ hcm_network_segment_name: "{{ instana_zone_name }}"
 hcm_service_sync_value: true
 
 # Cloud
-hcm_cloud_name: "SUPER-RIA-DEMO"
+cloud_provider: "AWS"
+hcm_cloud_name: "{{ cloud_provider }}-EC2-RIA-DEMO"
 hcm_cloud_type: "other"
 hcm_cloud_is_private: true
 
 # Location
-hcm_location_name: "LOCATION-{{ hcm_cloud_name }}"
+hcm_location_name: "Frankfurt"
 hcm_location_type: "region"
 hcm_location_is_multi_zone: false
 hcm_location_city: "Frankfurt am Main"
@@ -48,7 +54,7 @@ hcm_location_country: "Germany"
 hcm_location_geo_code: "8.6821,50.1109"
 
 # Cluster
-hcm_cluster_name: "{{ instana_cluster_name }}"
+hcm_cluster_name: "Cluster-{{ instance_name }}-{{ cloud_provider }}-{{ location }}"
 hcm_cluster_type: "K8S"
 hcm_cluster_is_multi_zone: false
 hcm_cluster_auto_discover: false

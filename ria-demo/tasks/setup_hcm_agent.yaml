@@ -36,7 +36,7 @@
 # Continue setup on kubernetes
 - name: Ensure agent namespace exists
   ansible.builtin.shell: |
-    kubectl create namespace {{ qotd_namespace }}
+    kubectl create namespace {{ app_namespace }}
   register: ns_result
   failed_when: "'AlreadyExists' not in ns_result.stderr and ns_result.rc != 0"
   environment:
@@ -44,7 +44,7 @@
 
 - name: Set current kubectl context to target namespace
   ansible.builtin.shell: |
-    kubectl config set-context --current --namespace={{ qotd_namespace }}
+    kubectl config set-context --current --namespace={{ app_namespace }}
   register: set_context_result
   changed_when: "'set' in set_context_result.stdout"
 
@@ -52,7 +52,7 @@
   ansible.builtin.shell: |
     palmctl install openhorizon \
       --name {{ hcm_agent_name }} \
-      --namespace {{ qotd_namespace }} \
+      --namespace {{ app_namespace }} \
       --storage-class {{ hcm_storage_class }} \
       -d {{ palmctl_local_path }} \
       -y

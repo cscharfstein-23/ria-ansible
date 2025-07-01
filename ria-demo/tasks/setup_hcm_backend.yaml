@@ -10,7 +10,7 @@
 - name: Create network segment with palmctl
   ansible.builtin.shell: |
     cat << EOM | palmctl create networksegment -f -
-    name: {{ hcm_network_segment_name }}
+    name: {{ app_namespace }}
     compatibility_set: RHSI
     service_sync: {{ hcm_service_sync_value }}
     EOM
@@ -178,7 +178,7 @@
 - name: Register namespace for cluster (only if not autodiscovered)
   ansible.builtin.shell: |
     cat << EOM | palmctl create namespace --cloud-name {{ hcm_cloud_name }} --cluster-name {{ hcm_cluster_name }} -f -
-    name: {{ qotd_namespace }}
+    name: {{ app_namespace }}
     network_segment_id: {{ hcm_networksegment_id }}
     gateway_id: {{ hcm_gateway_id }}
     EOM

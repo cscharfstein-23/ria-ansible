@@ -1,0 +1,76 @@
+# Deployment of the Example App: https://github.com/skupperproject/skupper-example-hello-world
+- name: Ensure namespace exists
+  ansible.builtin.shell: |
+    kubectl get namespace {{ app_namespace }} >/dev/null 2>&1 || \
+    kubectl create namespace {{ app_namespace }}
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Backend Setup
+  block:
+    - name: Create backend deployment
+      ansible.builtin.shell: |
+        kubectl create deployment backend \
+          --image=quay.io/skupper/hello-world-backend \
+          --port=8080 -n {{ app_namespace }} || true
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+    - name: Expose backend service
+      ansible.builtin.shell: |
+        kubectl expose deployment backend \
+          --port=8080 --target-port=8080 \
+          --name=backend --type=ClusterIP -n {{ app_namespace }} || true
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+
+- name: Frontend Setup
+  when: service_type == 'frontend'
+  block:
+    - name: Create frontend deployment
+      ansible.builtin.shell: |
+        kubectl create deployment frontend \
+          --image=quay.io/skupper/hello-world-frontend \
+          --port=8080 -n {{ app_namespace }} || true
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+    - name: Set BACKEND_URL env variable
+      ansible.builtin.shell: |
+        kubectl set env deployment/frontend BACKEND_URL=http://backend:8080 -n {{ app_namespace }}
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+    - name: Expose frontend service
+      ansible.builtin.shell: |
+        kubectl expose deployment frontend \
+          --port=8080 --target-port=8080 \
+          --name=frontend --type=ClusterIP -n {{ app_namespace }} || true
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+    - name: Create Ingress for frontend
+      ansible.builtin.shell: |
+        kubectl apply -n {{ app_namespace }} -f - <<EOF
+        apiVersion: networking.k8s.io/v1
+        kind: Ingress
+        metadata:
+          name: frontend-ingress
+          annotations:
+            traefik.ingress.kubernetes.io/router.entrypoints: web
+        spec:
+          rules:
+            - host: frontend.local
+              http:
+                paths:
+                  - path: /
+                    pathType: Prefix
+                    backend:
+                      service:
+                        name: frontend
+                        port:
+                          number: 8080
+        EOF
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
