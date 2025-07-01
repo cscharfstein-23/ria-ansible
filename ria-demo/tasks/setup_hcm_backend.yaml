@@ -34,7 +34,7 @@
     hcm_networksegment_id: >-
       {{
         (existing_segments.stdout | from_yaml).network_segments
-        | selectattr('name', 'equalto', hcm_network_segment_name)
+        | selectattr('name', 'equalto', app_namespace)
         | map(attribute='resource_id')
         | first
       }}
