@@ -3,6 +3,8 @@
   ansible.builtin.shell: curl -s http://checkip.amazonaws.com
   register: ec2_public_ip
 
+- name: wait 10 sec
+  ansible.builtin.command: sleep 10
 
 ########################
 # Networksegment
