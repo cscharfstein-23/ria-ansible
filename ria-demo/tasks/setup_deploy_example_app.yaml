@@ -62,8 +62,7 @@
             traefik.ingress.kubernetes.io/router.entrypoints: web
         spec:
           rules:
-            - host: frontend.local
-              http:
+            - http:
                 paths:
                   - path: /
                     pathType: Prefix
