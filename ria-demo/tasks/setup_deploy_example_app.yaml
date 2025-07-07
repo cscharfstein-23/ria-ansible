@@ -74,13 +74,13 @@
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - name: Create Ingress for frontend
+    - name: Create Ingress for flight-monitor
       ansible.builtin.shell: |
         kubectl apply -n {{ app_namespace }} -f - <<EOF
         apiVersion: networking.k8s.io/v1
         kind: Ingress
         metadata:
-          name: frontend-ingress
+          name: flight-monitor-ingress
           annotations:
             traefik.ingress.kubernetes.io/router.entrypoints: web
         spec:
@@ -91,7 +91,7 @@
                     pathType: Prefix
                     backend:
                       service:
-                        name: frontend
+                        name: flight-monitor
                         port:
                           number: 8080
         EOF
