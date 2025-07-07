@@ -12,6 +12,7 @@ traefik_https_port: 30443
 # Web App
 service_type: "backend" # frontend / backend
 app_namespace: "hello-world"
+registry_pwd: ""
 
 # INSTANA
 instana_namespace: instana-agent
@@ -23,10 +24,6 @@ instana_endpoint_host: "ingress-orange-saas.instana.io"
 instana_zone_name: "SUPER-RIA-DEMO"
 instana_cluster_name: "SUPER-RIA-DEMO-{{ instance_name }}"
 
-# QOTD
-qotd_repo_url: "https://gitlab.com/api/v4/projects/26143345/packages/helm/stable"
-qotd_repo_name: "qotd"
-qotd_namespace: "qotd"
 
 # HCM
 palmctl_file_name: palmctl_latest_amd64.deb

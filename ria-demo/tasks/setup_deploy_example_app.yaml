@@ -6,22 +6,45 @@
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
+- name: Create Docker registry secret
+  ansible.builtin.shell: >
+    kubectl create secret docker-registry pull_secret
+    --docker-server=us.icr.io
+    --docker-username=iamapikey
+    --docker-password={{ registry_pwd }}
+    --namespace={{ app_namespace }}
+  register: create_secret_result
+  failed_when: create_secret_result.rc != 0 and
+               "'AlreadyExists'" not in create_secret_result.stderr
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Patch default service account with imagePullSecret
+  ansible.builtin.shell: >
+    kubectl patch serviceaccount default
+    -p '{"imagePullSecrets": [{"name": "pull_secret" }]}'
+    --namespace={{ app_namespace }}
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+
+
 - name: Backend Setup
   when: service_type == 'backend'
   block:
     - name: Create backend deployment
       ansible.builtin.shell: |
-        kubectl create deployment backend \
-          --image=quay.io/skupper/hello-world-backend \
+        kubectl create deployment flight-data-provider \
+          --image=us.icr.io/hcm-demo-app/backend:latest \
           --port=8080 -n {{ app_namespace }} || true
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
     - name: Expose backend service
       ansible.builtin.shell: |
-        kubectl expose deployment backend \
+        kubectl expose deployment flight-data-provider \
           --port=8080 --target-port=8080 \
-          --name=backend --type=ClusterIP -n {{ app_namespace }} || true
+          --name=flight-data-provider --type=ClusterIP -n {{ app_namespace }} || true
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
@@ -31,23 +54,23 @@
   block:
     - name: Create frontend deployment
       ansible.builtin.shell: |
-        kubectl create deployment frontend \
-          --image=quay.io/skupper/hello-world-frontend \
+        kubectl create deployment flight-monitor \
+          --image=us.icr.io/hcm-demo-app/frontend:latest \
           --port=8080 -n {{ app_namespace }} || true
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - name: Set BACKEND_URL env variable
-      ansible.builtin.shell: |
-        kubectl set env deployment/frontend BACKEND_URL=http://backend:8080 -n {{ app_namespace }}
-      environment:
-        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+    # - name: Set BACKEND_URL env variable
+    #   ansible.builtin.shell: |
+    #     kubectl set env deployment/flight-monitor -n {{ app_namespace }}
+    #   environment:
+    #     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
     - name: Expose frontend service
       ansible.builtin.shell: |
-        kubectl expose deployment frontend \
+        kubectl expose deployment flight-monitor \
           --port=8080 --target-port=8080 \
-          --name=frontend --type=ClusterIP -n {{ app_namespace }} || true
+          --name=flight-monitor --type=ClusterIP -n {{ app_namespace }} || true
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
