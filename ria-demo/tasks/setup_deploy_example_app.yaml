@@ -8,7 +8,7 @@
 
 - name: Create Docker registry secret
   ansible.builtin.shell: >
-    kubectl create secret docker-registry pull_secret
+    kubectl create secret docker-registry pull-secret
     --docker-server=us.icr.io
     --docker-username=iamapikey
     --docker-password={{ registry_pwd }}
@@ -22,7 +22,7 @@
 - name: Patch default service account with imagePullSecret
   ansible.builtin.shell: >
     kubectl patch serviceaccount default
-    -p '{"imagePullSecrets": [{"name": "pull_secret" }]}'
+    -p '{"imagePullSecrets": [{"name": "pull-secret" }]}'
     --namespace={{ app_namespace }}
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
