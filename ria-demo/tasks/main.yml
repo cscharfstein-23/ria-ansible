@@ -29,7 +29,7 @@
   tags:
     - instana
 
-- name: Include Deployment of Qotd App
+- name: Include Deployment of WebApp
   ansible.builtin.include_tasks:
     file: setup_deploy_example_app.yaml
     apply:

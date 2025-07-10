@@ -15,6 +15,7 @@
     name: {{ app_namespace }}
     compatibility_set: RHSI
     service_sync: {{ hcm_service_sync_value }}
+    resource_group_id: default-infra
     EOM
   register: create_networksegment
   failed_when: >
@@ -52,6 +53,7 @@
     name: {{ hcm_cloud_name }}
     type: {{ hcm_cloud_type }}
     is_private: {{ hcm_cloud_is_private | lower }}
+    resource_group_id: default-infra
     EOM
   register: hcm_cloud_result
   failed_when: >
@@ -130,6 +132,7 @@
     is_multi_zone: {{ hcm_cluster_is_multi_zone | lower }}
     api_end_point: https://{{ ec2_public_ip.stdout }}:6443
     auto_discover: {{ hcm_cluster_auto_discover | lower }}
+    resource_group_id: default-infra
     EOM
   register: hcm_cluster_result
   failed_when: >
@@ -183,6 +186,7 @@
     name: {{ app_namespace }}
     network_segment_id: {{ hcm_networksegment_id }}
     gateway_id: {{ hcm_gateway_id }}
+    resource_group_id: default-infra
     EOM
   when: not hcm_cluster_auto_discover
   register: hcm_namespace_result
