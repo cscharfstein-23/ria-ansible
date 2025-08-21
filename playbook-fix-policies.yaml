@@ -15,6 +15,14 @@
     network_segment_name: "myapp-ria"
 
   tasks:
+    - name: Check Host
+      ansible.builtin.shell: uname -a
+      register: host_check
+      changed_when: false
+      failed_when: false
+  
+    - debug: var=host_check.stdout
+
     - name: Check palmctl installation
       ansible.builtin.shell: palmctl --version
       register: palmctl_check
