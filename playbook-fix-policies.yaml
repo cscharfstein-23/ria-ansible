@@ -16,7 +16,7 @@
 
   tasks:
     - name: Check Host
-      ansible.builtin.shell: dnf --version
+      ansible.builtin.shell: whoami
       register: host_check
       changed_when: false
       failed_when: false
@@ -44,7 +44,7 @@
             name: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
             state: present
             use_backend: dnf4
-          become: true
+          #become: true
 
         - name: Check palmctl version
           ansible.builtin.shell: palmctl --version
