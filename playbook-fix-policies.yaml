@@ -19,6 +19,7 @@
       ansible.builtin.shell: palmctl --version
       register: palmctl_check
       changed_when: false
+      failed_when: false
 
     - name: Setup Pre-Reqs
       when: palmctl_check.rc != 0
