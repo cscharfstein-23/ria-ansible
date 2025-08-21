@@ -3,7 +3,7 @@
   hosts: localhost
   gather_facts: false
   vars:
-    palmctl_file_name: palmctl_latest_amd64.deb
+    palmctl_file_name: palmctl_latest_x86_64.rpm
     palmctl_download_url: "https://github.com/IBM/palmctl/releases/latest/download/{{ palmctl_file_name }}"
     palmctl_local_path: "/tmp"
     mesh_api_key: ""
@@ -32,10 +32,9 @@
             force: true
 
         - name: Install palmctl .deb package
-          ansible.builtin.apt:
-            deb: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
+          ansible.builtin.dnf:
+            name: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
             state: present
-            update_cache: false
 
         - name: Check palmctl version
           ansible.builtin.shell: palmctl --version
