@@ -35,6 +35,7 @@
           ansible.builtin.dnf:
             name: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
             state: present
+            use_backend: auto
           become: true
 
         - name: Check palmctl version
