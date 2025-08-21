@@ -1,9 +1,20 @@
 ---
 - name: Ensure Mesh policy exists
-  hosts: localhost
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Dynamisch EC2 Host hinzufügen
+      ansible.builtin.add_host:
+        name: "{{ groups['all'] | random }}"
+        groups: chosen
+        ansible_user: ubuntu
+
+- name: Ensure Mesh policy exists
+  hosts: chosen
+  become: true
   gather_facts: false
   vars:
-    palmctl_file_name: palmctl_latest_x86_64.rpm
+    palmctl_file_name: palmctl_latest_amd64.deb
     palmctl_download_url: "https://github.com/IBM/palmctl/releases/latest/download/{{ palmctl_file_name }}"
     palmctl_local_path: "/tmp"
     mesh_api_key: ""
@@ -15,14 +26,6 @@
     network_segment_name: "myapp-ria"
 
   tasks:
-    - name: Check Host
-      ansible.builtin.shell: whoami
-      register: host_check
-      changed_when: false
-      failed_when: false
-  
-    - debug: var=host_check.stdout
-
     - name: Check palmctl installation
       ansible.builtin.shell: palmctl --version
       register: palmctl_check
@@ -40,11 +43,10 @@
             force: true
 
         - name: Install palmctl .deb package
-          ansible.builtin.dnf:
-            name: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
+          ansible.builtin.apt:
+            deb: "{{ palmctl_local_path }}/{{ palmctl_file_name }}"
             state: present
-            use_backend: dnf4
-          #become: true
+            update_cache: false
 
         - name: Check palmctl version
           ansible.builtin.shell: palmctl --version
