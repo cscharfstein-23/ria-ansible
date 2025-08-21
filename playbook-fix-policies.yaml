@@ -16,7 +16,7 @@
 
   tasks:
     - name: Check Host
-      ansible.builtin.shell: uname -a
+      ansible.builtin.shell: cat /etc/*-release
       register: host_check
       changed_when: false
       failed_when: false
