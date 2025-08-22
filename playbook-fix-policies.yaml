@@ -1,15 +1,25 @@
 ---
-- name: Ensure Mesh policy exists
-  hosts: all
+- name: Pick one backend host
+  hosts: localhost
   gather_facts: no
   tasks:
-    - name: Dynamisch EC2 Host hinzufügen
+    - name: Fail early if group is empty
+      ansible.builtin.assert:
+        that:
+          - groups['role_backend'] | length > 0
+        fail_msg: "No hosts in group 'role_backend'."
+
+    - name: Choose a random backend host
+      ansible.builtin.set_fact:
+        chosen_host: "{{ groups['role_backend'] | random }}"
+
+    - name: Add chosen host to group 'chosen'
       ansible.builtin.add_host:
-        name: "{{ groups['all'] | random }}"
+        name: "{{ chosen_host }}"
         groups: chosen
         ansible_user: ubuntu
 
-- name: Ensure Mesh policy exists
+- name: Ensure Mesh policy exists on the chosen backend
   hosts: chosen
   become: true
   gather_facts: false
