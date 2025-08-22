@@ -1,0 +1,35 @@
+---
+- name: Pick one backend host
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: Fail early if group is empty
+      ansible.builtin.assert:
+        that:
+          - groups['role_backend'] | length > 0
+        fail_msg: "No hosts in group 'role_backend'."
+
+    - name: Choose a random backend host
+      ansible.builtin.set_fact:
+        chosen_host: "{{ groups['role_backend'] | random }}"
+
+    - name: Add chosen host to group 'chosen'
+      ansible.builtin.add_host:
+        name: "{{ chosen_host }}"
+        groups: chosen
+        ansible_user: ubuntu
+
+- name: Scale Microservice on the chosen backend
+  hosts: chosen
+  become: true
+  gather_facts: false
+  vars:
+    microservice_name: ""
+    replica_count: "3"
+    app_namespace: "myapp-ria"
+  tasks:
+    - name: Scale {{ microservice_name }}
+      ansible.builtin.shell: |
+        kubectl scale --replicas={{ replica_count }} deployment {{ microservice_name }} -n {{ app_namespace }}
+      environment:
+        KUBECONFIG: /etc/rancher/k3s/k3s.yaml
