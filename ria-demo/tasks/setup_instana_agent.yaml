@@ -8,7 +8,7 @@
 
 - name: Install Instana Agent with Helm
   ansible.builtin.shell: |
-    helm install {{ instana_repo_name }} \
+    helm upgrade --install {{ instana_repo_name }} \
     --repo {{ instana_repo_url }} \
     --namespace {{ instana_namespace }} \
     --create-namespace \
