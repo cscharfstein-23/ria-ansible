@@ -9,17 +9,23 @@
 
 - name: Create needed namespaces
   ansible.builtin.shell: |
-    kubectl create namespace {{ qotd_namespace }}
-    kubectl create namespace {{ qotd_namespace }}-load
+    kubectl create namespace {{ app_namespace }}
+    kubectl create namespace {{ app_namespace }}-load
+  register: create_namespaces_result
+  failed_when: create_namespaces_result.rc != 0 and
+               "AlreadyExists" not in create_namespaces_result.stderr
 
 - name: Install Quote of the day with Helm
   ansible.builtin.shell: |
-    helm install {{ qotd_repo_name }} \
-    --namespace {{ qotd_namespace }} \
+    helm install qotd2 {{ qotd_repo_name }} \
+    --namespace {{ app_namespace }} \
     --repo {{ qotd_repo_url }} \
     --set host={{ instance_name }} \
     --set enableInstana=true \
     --set useNodePort=true \
-    qotd
+    --set instanaReportingUrl={{ instanaReportingUrl }} \
+    --set instanaEnumMinJsUrl={{ instanaEnumMinJsUrl }} \
+    --set appNamespace={{ app_namespace }} \
+    --set loadNamespace={{ app_namespace }}-load 
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml

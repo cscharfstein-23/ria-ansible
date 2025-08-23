@@ -29,14 +29,45 @@
   tags:
     - instana
 
-- name: Include Deployment of WebApp
+- name: Include Instana Appview Setup
+  when: service_type == 'frontend'
+  ansible.builtin.include_tasks:
+    file: setup_instana_appview.yaml
+    apply:
+      tags:
+        - instana_appview
+  tags:
+    - instana_appview
+
+- name: Include Deployment of Flight Monitor App
+  when: app_name == 'flightmonitor'
   ansible.builtin.include_tasks:
     file: setup_deploy_example_app.yaml
     apply:
       tags:
-        - webapp
+        - flightmonitor
   tags:
-    - webapp
+    - flightmonitor
+
+- name: Include Deployment of Quote of the Day App
+  when: app_name == 'qotd'
+  ansible.builtin.include_tasks:
+    file: setup_deploy_qotd.yaml
+    apply:
+      tags:
+        - qotd
+  tags:
+    - qotd
+
+- name: Include Deployment of RobotShop App
+  when: app_name == 'robotshop'
+  ansible.builtin.include_tasks:
+    file: setup_deploy_robot_shop.yaml
+    apply:
+      tags:
+        - robotshop
+  tags:
+    - robotshop
 
 - name: Include HCM Agent Setup
   ansible.builtin.include_tasks:

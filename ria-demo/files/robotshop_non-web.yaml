@@ -1,0 +1,10 @@
+web:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []

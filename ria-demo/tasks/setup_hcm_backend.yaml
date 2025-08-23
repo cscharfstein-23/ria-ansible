@@ -21,26 +21,30 @@
   failed_when: >
     create_networksegment.rc != 0 and ('already exists' not in create_networksegment.stdout)
 
-- name: Extract networksegment_id from create_networksegment output
-  when: create_networksegment.rc == 0
-  ansible.builtin.set_fact:
-    networksegment_id: "{{ create_networksegment.stdout | regex_search('networksegment_id: (.+)', '\\1') }}"
-
-- name: Get existing networksegment if already exists
+- name: Check if networksegment exists
   when: create_networksegment.rc != 0 and ('already exists' in create_networksegment.stdout)
-  ansible.builtin.shell: palmctl get networksegments
-  register: existing_segments
+  ansible.builtin.command:
+    cmd: palmctl get networksegment --name {{ app_namespace }}
+  register: networksegment_check
+  changed_when: false
+
+- name: Parse palmctl output once
+  ansible.builtin.set_fact:
+    ns_parsed: "{{ networksegment_check.stdout | from_yaml }}"
 
 - name: Extract existing networksegment_id from palmctl get output
-  when: create_networksegment.rc != 0 and ('already exists' in create_networksegment.stdout)
   ansible.builtin.set_fact:
     hcm_networksegment_id: >-
       {{
-        (existing_segments.stdout | from_yaml).network_segments
-        | selectattr('name', 'equalto', app_namespace)
-        | map(attribute='resource_id')
-        | first
+        (
+          ns_parsed.network_segments | default([])
+          | selectattr('name', 'equalto', app_namespace)
+          | map(attribute='resource_id')
+          | first
+        )
+        | default(ns_parsed.resource_id)
       }}
+
 
 
 

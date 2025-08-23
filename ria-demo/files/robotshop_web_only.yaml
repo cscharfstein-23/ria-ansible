@@ -1,0 +1,134 @@
+# Non-Web Komponenten per required NodeAffinity blockieren
+cart:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+catalogue:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+dispatch:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+load:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+mongodb:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+mysql:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+payment:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+rabbitmq:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+ratings:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+redis:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+shipping:
+  # falls vom Chart unterstützt, wie bei dir gezeigt:
+  gateway: null
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []
+
+user:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: node-restriction.kubernetes.io/pool_blackhole
+            operator: Exists
+  nodeSelector: {}
+  tolerations: []

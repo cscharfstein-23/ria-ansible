@@ -1,28 +1,48 @@
 #SPDX-License-Identifier: MIT-0
 ---
-# defaults file for ria-demo
+guard_cloud_init: true
+
 ansible_user: ubuntu
 instance_name: "cayo123"
-location: ""
+location: "south"
+new_hostname: "{{ instance_name }}-{{ service_type }}.{{ instana_zone_name | lower }}"
+
+# Terraform (needed to create Instana App View)
+terraform_version: latest
+terraform_pkg_url: "https://releases.hashicorp.com/terraform/{{ __terraform_version }}/terraform_{{ __terraform_version }}_linux_{{ base_arch[ansible_architecture] | default('amd64') }}.zip"
 
 # K3S Traefik
 traefik_http_port: 30080
 traefik_https_port: 30443
 
 # Web App
-service_type: "backend" # frontend / backend
-app_namespace: "hello-world"
+app_name: "robotshop"
+service_type: "frontend" # frontend / backend
+app_namespace: "super-automation-demo"
 registry_pwd: ""
+
+# QotD
+qotd_repo_url: "https://gitlab.com/api/v4/projects/26143345/packages/helm/stable"
+qotd_repo_name: "qotd"
+
+# Robot Shop
+robotshop_git_repo: "https://github.com/instana/robot-shop.git"
+robotshop_home: "/tmp"
+robotshop_clone_dir: "{{ robotshop_home }}/repos/{{ app_namespace }}"
 
 # INSTANA
 instana_namespace: instana-agent
 instana_repo_name: instana-agent
 instana_repo_url: https://agents.instana.io/helm
-instana_agent_key: "XXX"
-instana_download_key: "XXX"
-instana_endpoint_host: "ingress-orange-saas.instana.io"
-instana_zone_name: "SUPER-RIA-DEMO"
-instana_cluster_name: "SUPER-RIA-DEMO-{{ instance_name }}"
+instana_agent_key: ""
+instana_api_token: ""
+instana_api_endpoint: "tech-workshop.instana.io"
+instana_endpoint_host: "ingress-green-saas.instana.io"
+instana_eum_key: ""
+instana_zone_name: "SUPER-AUTOMATION-DEMO-ZONE"
+instana_cluster_name: "SUPER-AUTOMATION-DEMO-{{ instance_name }}"
+instanaEnumMinJsUrl: "https://eum.instana.io/1.7.5/eum.min.js"
+instanaReportingUrl: "https://eum-green-saas.instana.io"
 
 
 # HCM
@@ -32,7 +52,7 @@ palmctl_local_path: "/tmp"
 hcm_agent_namespace: "hcm"
 hcm_storage_class: "local-path"
 hcm_agent_name: "hcm-{{ instance_name }}"
-mesh_api_key: "XXXX"
+mesh_api_key: ""
 mesh_endpoint_url: "https://app.hybridcloudmesh.ibm.com"
 
 # Networksegment
@@ -41,7 +61,7 @@ hcm_service_sync_value: true
 
 # Cloud
 cloud_provider: "AWS"
-hcm_cloud_name: "{{ cloud_provider }}-EC2-RIA-DEMO"
+hcm_cloud_name: "{{ cloud_provider }}-EC2-SUPER-AUTOMATION-DEMO"
 hcm_cloud_type: "other"
 hcm_cloud_is_private: true
 
@@ -61,4 +81,13 @@ hcm_cluster_is_multi_zone: false
 hcm_cluster_auto_discover: false
 
 # Namespace (nur bei hcm_cluster_auto_discover: false)
-hcm_cluster_namespace: "{{ qotd_namespace }}"
+hcm_cluster_namespace: "{{ app_namespace }}"
+
+# SNMP
+snmp_syslocation: "AWS - eu-central-1 (Frankfurt)"
+snmp_syscontact: "ops@example.com"
+snmp_v3_user: "snmpuser"
+snmp_v3_auth_protocol: "SHA"   # SHA | SHA-224 | SHA-256 | SHA-384 | SHA-512
+snmp_v3_auth_pass: "CHANGE_ME_auth"
+snmp_v3_priv_protocol: "AES"   # AES | AES-192 | AES-256 | DES
+snmp_v3_priv_pass: "CHANGE_ME_priv"

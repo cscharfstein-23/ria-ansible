@@ -13,7 +13,7 @@
     --namespace {{ instana_namespace }} \
     --create-namespace \
     --set agent.key={{ instana_agent_key }} \
-    --set agent.downloadKey={{ instana_download_key }} \
+    --set agent.downloadKey={{ instana_agent_key }} \
     --set agent.endpointHost={{ instana_endpoint_host }} \
     --set agent.endpointPort=443 \
     --set zone.name={{ instana_zone_name }} \
