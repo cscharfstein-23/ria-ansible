@@ -26,7 +26,6 @@
   ansible.builtin.command:
     cmd: palmctl get networksegment --name {{ app_namespace }}
   register: networksegment_check
-  changed_when: false
 
 - name: Parse palmctl output once
   ansible.builtin.set_fact:
