@@ -6,7 +6,7 @@
   vars:
     microservice_name: ""
     replica_count: "3"
-    app_namespace: "myapp-ria"
+    app_namespace: "super-automation-demo"
   tasks:
     - name: Scale {{ microservice_name }}
       ansible.builtin.shell: |
