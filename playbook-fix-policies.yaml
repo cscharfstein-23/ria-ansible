@@ -33,7 +33,7 @@
     policy_name_prefix: "allow-front-to"
     microservice_name: ""
     resource_group_id: "default-app"
-    network_segment_name: "myapp-ria"
+    network_segment_name: "super-automation-demo"
 
   tasks:
     - name: Check palmctl installation
