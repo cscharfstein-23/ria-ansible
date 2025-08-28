@@ -44,7 +44,6 @@ instana_cluster_name: "SUPER-AUTOMATION-DEMO-{{ instance_name }}"
 instanaEnumMinJsUrl: "https://eum.instana.io/1.7.5/eum.min.js"
 instanaReportingUrl: "https://eum-green-saas.instana.io"
 
-
 # HCM
 palmctl_file_name: palmctl_latest_amd64.deb
 palmctl_download_url: "https://github.com/IBM/palmctl/releases/latest/download/{{ palmctl_file_name }}"
@@ -87,7 +86,15 @@ hcm_cluster_namespace: "{{ app_namespace }}"
 snmp_syslocation: "AWS - eu-central-1 (Frankfurt)"
 snmp_syscontact: "ops@example.com"
 snmp_v3_user: "snmpuser"
-snmp_v3_auth_protocol: "SHA"   # SHA | SHA-224 | SHA-256 | SHA-384 | SHA-512
+snmp_v3_auth_protocol: "SHA" # SHA | SHA-224 | SHA-256 | SHA-384 | SHA-512
 snmp_v3_auth_pass: "CHANGE_ME_auth"
-snmp_v3_priv_protocol: "AES"   # AES | AES-192 | AES-256 | DES
+snmp_v3_priv_protocol: "AES" # AES | AES-192 | AES-256 | DES
 snmp_v3_priv_pass: "CHANGE_ME_priv"
+
+# Turbonomic
+turbo_repo_name: "turbonomic"
+turbo_repo_url: "https://ibm.github.io/turbonomic-container-platform/"
+turbo_namespace: "kubeturbo"
+turbo_hostname: ""
+turbo_password: ""
+turbo_clustername: "SUPER-AUTOMATION-DEMO-{{ instance_name }}"
