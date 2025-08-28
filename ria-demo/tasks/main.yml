@@ -73,7 +73,6 @@
     - kubecost
 ###################################################
 
-
 ################# App Deployment ##################
 - name: Include Instana Appview Setup
   when: service_type == 'frontend' and app_name
@@ -114,4 +113,25 @@
         - robotshop
   tags:
     - robotshop
-###################################################
+
+- name: Setup Turbonomic Connection
+  ansible.builtin.include_tasks:
+    file: setup_kubeturbo.yaml
+
+- name: Include HCM Agent Setup
+  ansible.builtin.include_tasks:
+    file: setup_hcm_agent.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm
+
+- name: Include HCM Backend Setup
+  ansible.builtin.include_tasks:
+    file: setup_hcm_backend.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm

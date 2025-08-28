@@ -1,0 +1,21 @@
+- name: Add Helm-Repo for Turbonomic
+  ansible.builtin.shell: |
+    helm repo add {{ turbo_repo_name }} {{ turbo_repo_url }}
+
+- name: Update Helm-Repos
+  ansible.builtin.shell: |
+    helm repo update
+
+- name: Install Instana Agent with Helm
+  ansible.builtin.shell: |
+    helm upgrade --install {{ turbo_repo_name }} \
+    --repo {{ turbo_repo_url }} \
+    --namespace {{ turbo_namespace }} \
+    --create-namespace \
+    --set serverMeta.turboServer={{ turbo_hostname }} \
+    --set restAPIConfig.opsManagerUserName="Administrator" \
+    --set restAPIConfig.opsManagerPassword={{ turbo_password }} \
+    --set targetConfig.targetName={{ turbo_clustername}}
+    kubeturbo
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
