@@ -6,7 +6,7 @@
   ansible.builtin.shell: |
     helm repo update
 
-- name: Install Instana Agent with Helm
+- name: Install Kubeturbo with Helm
   ansible.builtin.shell: |
     helm upgrade --install {{ turbo_repo_name }} \
     --repo {{ turbo_repo_url }} \
@@ -15,7 +15,7 @@
     --set serverMeta.turboServer={{ turbo_hostname }} \
     --set restAPIConfig.opsManagerUserName="Administrator" \
     --set restAPIConfig.opsManagerPassword={{ turbo_password }} \
-    --set targetConfig.targetName={{ turbo_clustername}}
+    --set targetConfig.targetName={{ turbo_clustername}} \
     kubeturbo
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
