@@ -72,7 +72,12 @@
 - name: Setup Turbonomic Connection
   ansible.builtin.include_tasks:
     file: setup_kubeturbo.yaml
-
+  tags:
+    - turbo
+    apply:
+      tags:
+        - turbo
+        
 - name: Include HCM Agent Setup
   ansible.builtin.include_tasks:
     file: setup_hcm_agent.yaml
