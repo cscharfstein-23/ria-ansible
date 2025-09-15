@@ -194,4 +194,4 @@
   when: not hcm_cluster_auto_discover
   register: hcm_namespace_result
   failed_when: >
-    hcm_namespace_result.rc != 0 and 'already exists' not in hcm_namespace_result.stdout
+    hcm_namespace_result.rc != 0 and 'is already associated with' not in hcm_namespace_result.stdout
