@@ -15,5 +15,12 @@ ports:
     tls:
       enabled: true
 
+  kubecost:
+    port: 9090
+    expose:
+      default: true
+    hostPort: 9090
+    protocol: TCP
+  
 service:
   enabled: false  # ❗ verhindert, dass ein LoadBalancer-Service erzeugt wird

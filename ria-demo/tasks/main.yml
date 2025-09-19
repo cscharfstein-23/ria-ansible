@@ -86,3 +86,12 @@
         - hcm
   tags:
     - hcm
+
+# - name: Include KubeCost Setup
+#   ansible.builtin.include_tasks:
+#     file: setup_kubecost.yaml
+#     apply:
+#       tags:
+#         - kubecost
+#   tags:
+#     - kubecost

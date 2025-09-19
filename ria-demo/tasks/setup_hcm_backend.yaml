@@ -22,7 +22,6 @@
     create_networksegment.rc != 0 and ('already exists' not in create_networksegment.stdout)
 
 - name: Check if networksegment exists
-  when: create_networksegment.rc != 0 and ('already exists' in create_networksegment.stdout)
   ansible.builtin.command:
     cmd: palmctl get networksegment --name {{ app_namespace }}
   register: networksegment_check
