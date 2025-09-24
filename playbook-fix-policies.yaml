@@ -17,7 +17,7 @@
       ansible.builtin.add_host:
         name: "{{ chosen_host }}"
         groups: chosen
-        ansible_user: ubuntu
+        ansible_user: "{{ remote_user }}"
 
 - name: Ensure Mesh policy exists on the chosen backend
   hosts: chosen

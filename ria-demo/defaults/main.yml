@@ -1,5 +1,15 @@
 #SPDX-License-Identifier: MIT-0
 ---
+
+######## Feature Flags ########
+feature_kubecost: true
+feature_instana: true
+feature_turbonomic: true
+feature_sevone: true
+feature_hcm: true
+###############################
+
+
 guard_cloud_init: true
 
 ansible_user: ubuntu
@@ -11,12 +21,8 @@ new_hostname: "{{ instance_name }}-{{ service_type }}.{{ instana_zone_name | low
 terraform_version: latest
 terraform_pkg_url: "https://releases.hashicorp.com/terraform/{{ __terraform_version }}/terraform_{{ __terraform_version }}_linux_{{ base_arch[ansible_architecture] | default('amd64') }}.zip"
 
-# K3S Traefik
-traefik_http_port: 30080
-traefik_https_port: 30443
-
 # Web App
-app_name: "robotshop"
+app_name: "robotshop" # robotshop, qotd, flightmonitor
 service_type: "frontend" # frontend / backend
 app_namespace: "super-automation-demo"
 registry_pwd: ""

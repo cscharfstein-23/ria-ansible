@@ -1,15 +1,15 @@
-- name: Add EC2 host dynamically
+- name: Add host dynamically
   hosts: localhost
   gather_facts: false
   tasks:
-    - name: Dynamisch EC2 Host hinzufügen
+    - name: Dynamisch Host hinzufügen
       ansible.builtin.add_host:
         name: ec2_target
         ansible_host: "{{ ec2_ip }}"
-        ansible_user: ubuntu
+        ansible_user: "{{ remote_user }}"
         groups: ec2_dynamic_group
 
-- name: Setup RIA Demo Cluster
+- name: Setup Super Demo
   hosts: ec2_dynamic_group
   become: true
 

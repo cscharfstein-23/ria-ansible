@@ -1,7 +1,6 @@
 #SPDX-License-Identifier: MIT-0
 ---
 # tasks file for ria-demo
-
 - name: Install dependencies
   ansible.builtin.include_tasks:
     file: setup_deps.yaml
@@ -20,7 +19,19 @@
   tags:
     - k3s
 
+################# Feature Flags for Components ####x
+- name: Include SNMP Setup
+  when: feature_snmp
+  ansible.builtin.include_tasks:
+    file: setup_snmp.yaml
+    apply:
+      tags:
+        - snmp
+  tags:
+    - snmp
+
 - name: Include Instana Agent Setup
+  when: feature_instana
   ansible.builtin.include_tasks:
     file: setup_instana_agent.yaml
     apply:
@@ -29,8 +40,41 @@
   tags:
     - instana
 
+- name: Include HCM Agent Setup
+  when: feature_hcm
+  ansible.builtin.include_tasks:
+    file: setup_hcm_agent.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm
+
+- name: Include HCM Backend Setup
+  when: feature_hcm
+  ansible.builtin.include_tasks:
+    file: setup_hcm_backend.yaml
+    apply:
+      tags:
+        - hcm
+  tags:
+    - hcm
+
+- name: Include KubeCost Setup
+  when: feature_kubecost
+  ansible.builtin.include_tasks:
+    file: setup_kubecost.yaml
+    apply:
+      tags:
+        - kubecost
+  tags:
+    - kubecost
+###################################################
+
+
+################# App Deployment ##################
 - name: Include Instana Appview Setup
-  when: service_type == 'frontend'
+  when: service_type == 'frontend' and app_name
   ansible.builtin.include_tasks:
     file: setup_instana_appview.yaml
     apply:
@@ -42,7 +86,7 @@
 - name: Include Deployment of Flight Monitor App
   when: app_name == 'flightmonitor'
   ansible.builtin.include_tasks:
-    file: setup_deploy_example_app.yaml
+    file: setup_deploy_flightmonitor.yaml
     apply:
       tags:
         - flightmonitor
@@ -68,30 +112,4 @@
         - robotshop
   tags:
     - robotshop
-
-- name: Include HCM Agent Setup
-  ansible.builtin.include_tasks:
-    file: setup_hcm_agent.yaml
-    apply:
-      tags:
-        - hcm
-  tags:
-    - hcm
-
-- name: Include HCM Backend Setup
-  ansible.builtin.include_tasks:
-    file: setup_hcm_backend.yaml
-    apply:
-      tags:
-        - hcm
-  tags:
-    - hcm
-
-# - name: Include KubeCost Setup
-#   ansible.builtin.include_tasks:
-#     file: setup_kubecost.yaml
-#     apply:
-#       tags:
-#         - kubecost
-#   tags:
-#     - kubecost
+###################################################
