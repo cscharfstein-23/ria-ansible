@@ -43,7 +43,7 @@
     - instana
 
 - name: Include HCM Agent Setup
-  when: feature_hcm | bool
+  when: (feature_hcm | bool) and (service_type != "full")
   ansible.builtin.include_tasks:
     file: setup_hcm_agent.yaml
     apply:
@@ -53,7 +53,7 @@
     - hcm
 
 - name: Include HCM Backend Setup
-  when: feature_hcm | bool
+  when: (feature_hcm | bool) and (service_type != "full")
   ansible.builtin.include_tasks:
     file: setup_hcm_backend.yaml
     apply:
