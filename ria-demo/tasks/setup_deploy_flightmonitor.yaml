@@ -1,12 +1,12 @@
 # Deployment of the Example App: https://github.com/skupperproject/skupper-example-hello-world
-- name: Ensure namespace exists
+- name: Ensure FlightMonitor namespace exists
   ansible.builtin.shell: |
     kubectl get namespace {{ app_namespace }} >/dev/null 2>&1 || \
     kubectl create namespace {{ app_namespace }}
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-- name: Create Docker registry secret
+- name: Create FlightMonitor Docker registry secret
   ansible.builtin.shell: >
     kubectl create secret docker-registry pull-secret
     --docker-server=us.icr.io
@@ -29,10 +29,10 @@
 
 
 
-- name: Backend Setup
-  when: service_type == 'backend'
+- name: FlightMonitor Backend Setup
+  when: service_type == 'backend' or service_type == 'full'
   block:
-    - name: Create backend deployment
+    - name: Create FlightMonitor backend deployment
       ansible.builtin.shell: |
         kubectl create deployment flight-data-provider \
           --image=us.icr.io/hcm-demo-app/backend:latest \
@@ -40,7 +40,7 @@
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - name: Expose backend service
+    - name: Expose FlightMonitor backend service
       ansible.builtin.shell: |
         kubectl expose deployment flight-data-provider \
           --port=8080 --target-port=8080 \
@@ -49,10 +49,10 @@
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 
-- name: Frontend Setup
-  when: service_type == 'frontend'
+- name: FlightMonitor Frontend Setup
+  when: service_type == 'frontend'  or service_type == 'full'
   block:
-    - name: Create frontend deployment
+    - name: Create FlightMonitor frontend deployment
       ansible.builtin.shell: |
         kubectl create deployment flight-monitor \
           --image=us.icr.io/hcm-demo-app/frontend:latest \
@@ -66,7 +66,7 @@
     #   environment:
     #     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
-    - name: Expose frontend service
+    - name: Expose FlightMonitor frontend service
       ansible.builtin.shell: |
         kubectl expose deployment flight-monitor \
           --port=8080 --target-port=8080 \
