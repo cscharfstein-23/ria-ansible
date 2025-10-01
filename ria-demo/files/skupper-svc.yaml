@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: skupper-router-private
-  namespace: mesh
+  namespace: {{ app_namespace }}
   labels:
     com.ibm.mesh.skupper/generated: "true"
 spec:
