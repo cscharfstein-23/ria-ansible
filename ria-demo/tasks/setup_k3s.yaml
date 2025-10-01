@@ -39,7 +39,7 @@
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 - name: Copy and apply MetalLB Resources (IP Pool)
-  ansible.builtin.copy:
+  ansible.builtin.template:
     src: files/metallb-ip.yml
     dest: /tmp/ips.yml
     mode: '0644'
