@@ -38,6 +38,8 @@
   ansible.builtin.shell: helm install   metallb oci://registry.suse.com/edge/charts/metallb   --namespace metallb-system   --create-namespace
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+- name: Wait for MetalLB to install 
+  ansible.builtin.shell: kubectl wait --for condition=ready -n metallb-system $(kubectl get pods -n metallb-system -l app.kubernetes.io/component=controller -o name) --timeout=60s;
 - name: Copy and apply MetalLB Resources (IP Pool)
   ansible.builtin.template:
     src: files/metallb-ip.yml
