@@ -7,7 +7,7 @@ metadata:
     com.ibm.mesh.skupper/generated: "true"
 spec:
   type: LoadBalancer
-  loadBalancerIP: {{ ec2_ip }}
+  loadBalancerIP: {{ ansible_default_ipv4 }}
   allocateLoadBalancerNodePorts: true
   externalTrafficPolicy: Cluster
   internalTrafficPolicy: Cluster
