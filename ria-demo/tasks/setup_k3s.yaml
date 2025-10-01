@@ -34,7 +34,24 @@
   ansible.builtin.shell: kubectl get nodes
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
-
+- name: Install MetalLB via Helm
+  ansible.builtin.shell: helm install   metallb oci://registry.suse.com/edge/charts/metallb   --namespace metallb-system   --create-namespace
+- name: Copy and apply MetalLB Resources (IP Pool)
+  ansible.builtin.copy:
+    src: files/metallb-ip.yml
+    dest: /tmp/ips.yml
+    mode: '0644'
+    
+- name: Copy and apply MetalLB Resources (Advert)
+  ansible.builtin.copy:
+    src: files/metallb-advert.yml
+    dest: /tmp/advert.yml
+    mode: '0644'
+- name: apply MetalLB CRs
+  ansible.builtin.shell: kubectl apply -f {{ item }}
+  loop:
+  - /tmp/advert.yml
+  - /tmp/ips.yml
 - name: Add Traefik Helm repo
   ansible.builtin.shell: helm repo add traefik https://traefik.github.io/charts
   args:
