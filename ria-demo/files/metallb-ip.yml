@@ -6,4 +6,4 @@ metadata:
 spec:
   addresses:
   - {{ ec2_public_ip.stdout }}/32
-  - {{ ec2_ip }}/32 # Internal IP. If this is not NATted we might ahave issues so maybe double check for identity.
+  - {{ ansible_default_ipv4 }}/32 # Internal IP. If this is not NATted we might ahave issues so maybe double check for identity.
