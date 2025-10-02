@@ -36,7 +36,7 @@
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
 - name: Install MetalLB via Helm
-  ansible.builtin.shell: helm install metallb oci://registry.suse.com/edge/charts/metallb --namespace metallb-system --create-namespace
+  ansible.builtin.shell: helm upgrade --install metallb oci://registry.suse.com/edge/charts/metallb --namespace metallb-system --create-namespace
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
