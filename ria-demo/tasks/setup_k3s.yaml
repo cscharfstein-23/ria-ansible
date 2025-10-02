@@ -75,6 +75,76 @@
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
+- name: Create MetalLB Role
+  ansible.builtin.shell: |
+    kubectl apply -n metallb-system -f - <<EOF
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: metallb-manager
+      namespace: metallb-system
+    rules:
+      - apiGroups:
+          - metallb.io        # MetalLB custom resources
+        resources:
+          - addresspools      # manage address pools
+          - ipaddresspools    # manage IP address pools
+          - bgpconfigs        # manage BGP configurations
+          - l2configs         # manage L2 configurations
+          - l2advertisements  # manage L2 advertisements
+        verbs:
+          - get
+          - list
+          - create
+          - update
+          - delete
+          - patch
+      - apiGroups:
+          - apps              # manage MetalLB controller and speaker deployments
+        resources:
+          - deployments       # manage deployment resources for MetalLB
+          - daemonsets        # manage daemonset resources for MetalLB
+        verbs:
+          - get
+          - list
+          - create
+          - update
+          - delete
+          - patch
+      - apiGroups:
+          - networking.k8s.io  # for services and related resources
+        resources:
+          - services           # manage services that MetalLB operate
+        verbs:
+          - get
+          - list
+          - create
+          - update
+          - delete
+          - patch
+    EOF
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Create MetalLB Role
+  ansible.builtin.shell: |
+    kubectl apply -n metallb-system -f - <<EOF
+    kind: RoleBinding
+    apiVersion: rbac.authorization.k8s.io/v1
+    metadata:
+      name: mesh-metallb-manager
+      namespace: metallb-system
+    roleRef:
+      kind: Role
+      name: metallb-manager
+    subjects:
+    - kind: ServiceAccount
+      name: mesh-rhsi-agent
+      namespace: {{ app_namespace }}
+    EOF
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
 
 - name: Add Traefik Helm repo
   ansible.builtin.shell: helm repo add traefik https://traefik.github.io/charts
