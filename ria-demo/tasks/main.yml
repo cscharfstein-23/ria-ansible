@@ -114,4 +114,14 @@
         - robotshop
   tags:
     - robotshop
+
+- name: Include Deployment of Camera App
+  when: app_name == 'camera'
+  ansible.builtin.include_tasks:
+    file: setup_deploy_camera.yaml
+    apply:
+      tags:
+        - camera
+  tags:
+    - camera
 ###################################################
