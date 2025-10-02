@@ -39,7 +39,8 @@
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 - name: Wait for MetalLB to install 
-  ansible.builtin.shell: kubectl wait --for condition=ready -n metallb-system $(kubectl get pods -n metallb-system -l app.kubernetes.io/component=controller -o name) --timeout=60s;
+  ansible.builtin.pause: 
+    seconds: 30
 - name: Copy and apply MetalLB Resources (IP Pool)
   ansible.builtin.template:
     src: files/metallb-ip.yml
