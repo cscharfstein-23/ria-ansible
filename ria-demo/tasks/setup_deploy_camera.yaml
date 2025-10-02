@@ -221,7 +221,7 @@
           name: frontend-service
         spec:
           selector:
-            app: frontend
+            app: camera-frontend
           ports:
           - protocol: TCP
             port: 80
