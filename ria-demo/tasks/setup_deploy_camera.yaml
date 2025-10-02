@@ -19,30 +19,51 @@
           name: camera-backend-app-cm
         data:
           app.py: |
-            from flask import Flask, Response, render_template_string
-            import cv2
+            import cv2, threading, time
+            from flask import Flask, Response
 
             app = Flask(__name__)
 
-            def gen():
-                cap = cv2.VideoCapture(0)
-                if not cap.isOpened():
-                    raise RuntimeError('Could not open video device')
-                while True:
-                    ret, frame = cap.read()
-                    if not ret:
-                        break
-                    # encode as jpeg
-                    ret, jpeg = cv2.imencode('.jpg', frame)
-                    if not ret:
-                        continue
-                    yield (b'--frame\r\n'
-                          b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n')
-                cap.release()
+            class Camera:
+                def __init__(self):
+                    self.cap = cv2.VideoCapture(0)
+                    if not self.cap.isOpened():
+                        raise RuntimeError("Could not open video device")
+                    self.frame = None
+                    self.lock = threading.Lock()
+                    t = threading.Thread(target=self._update, daemon=True)
+                    t.start()
 
-            @app.route('/video_feed')
+                def _update(self):
+                    while True:
+                        ret, frame = self.cap.read()
+                        if ret:
+                            with self.lock:
+                                self.frame = frame
+                        time.sleep(0.03)  # ~30fps
+
+                def get_jpeg(self):
+                    with self.lock:
+                        if self.frame is None:
+                            return None
+                        ret, jpeg = cv2.imencode(".jpg", self.frame)
+                        if ret:
+                            return jpeg.tobytes()
+                        return None
+
+            camera = Camera()
+
+            def mjpeg_gen():
+                while True:
+                    frame = camera.get_jpeg()
+                    if frame:
+                        yield (b'--frame\r\n'
+                            b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                    time.sleep(0.03)
+
+            @app.route("/video_feed")
             def video_feed():
-                return Response(gen(), mimetype='multipart/x-mixed-replace; boundary=frame')
+                return Response(mjpeg_gen(), mimetype="multipart/x-mixed-replace; boundary=frame")
 
             @app.route('/')
             def index():
