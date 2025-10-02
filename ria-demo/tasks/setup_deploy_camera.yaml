@@ -88,7 +88,7 @@
                 - name: app-code
                   mountPath: /app
                 - name: video0
-                  mountPath: /dev/video1
+                  mountPath: /dev/video0
               volumes:
               - name: app-code
                 configMap:
@@ -154,7 +154,6 @@
                 location /video_feed {
                   # upstream backend service name: backend-service on port 5000
                   proxy_pass http://camera-backend:5000/video_feed;
-                  proxy_set_header Host $host;
                   proxy_http_version 1.1;
                   proxy_buffering off;
                   proxy_request_buffering off;
@@ -215,9 +214,20 @@
 
     - name: Expose Camera App frontend service
       ansible.builtin.shell: |
-        kubectl expose deployment camera-frontend \
-          --port=80 --target-port=80 --nodeport\
-          --name=camera-frontend --type=ClusterIP -n {{ app_namespace }} || true
+        kubectl apply -n {{ app_namespace }} -f - <<EOF
+        apiVersion: v1
+        kind: Service
+        metadata:
+          name: frontend-service
+        spec:
+          selector:
+            app: frontend
+          ports:
+          - protocol: TCP
+            port: 80
+            targetPort: 80
+            nodePort: 30080
+          type: NodePort
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
