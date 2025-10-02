@@ -63,3 +63,45 @@
 - name: Show palmctl output
   ansible.builtin.debug:
     msg: "{{ install_result.stdout }}"
+
+- name: Drop in MetalLB Private IP Service to handle NAT
+  ansible.builtin.shell: |
+    kubectl apply -n {{ app_namespace }} -f - <<EOF
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: skupper-router-private
+      labels:
+        com.ibm.mesh.skupper/generated: "true"
+    spec:
+      type: LoadBalancer
+      loadBalancerIP: {{ ansible_default_ipv4.address }}
+      allocateLoadBalancerNodePorts: true
+      externalTrafficPolicy: Cluster
+      internalTrafficPolicy: Cluster
+      ipFamilyPolicy: SingleStack
+      ipFamilies:
+        - IPv4
+      ports:
+        - name: inter-router
+          port: 55671
+          targetPort: 55671
+          protocol: TCP
+        - name: edge
+          port: 45671
+          targetPort: 45671
+          protocol: TCP
+        - name: claims
+          port: 8081
+          targetPort: 8081
+          protocol: TCP
+      selector:
+        app.kubernetes.io/name: skupper-router
+        app.kubernetes.io/part-of: skupper
+        application: skupper-router
+        com.ibm.mesh.skupper/generated: "true"
+        skupper.io/component: router
+      sessionAffinity: None
+    EOF
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml

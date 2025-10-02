@@ -1,6 +1,10 @@
+- name: Get public IP
+  ansible.builtin.shell: curl -s http://checkip.amazonaws.com
+  register: ec2_public_ip
+
 - name: Install k3s
   ansible.builtin.shell: |
-    curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik" sh -
+    curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="--disable traefik --disable servicelb" sh -
   args:
     creates: /usr/local/bin/k3s
 
@@ -30,6 +34,47 @@
   ansible.builtin.shell: kubectl get nodes
   environment:
     KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Install MetalLB via Helm
+  ansible.builtin.shell: helm install metallb oci://registry.suse.com/edge/charts/metallb --namespace metallb-system --create-namespace
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Wait for MetalLB to install 
+  ansible.builtin.pause: 
+    seconds: 30
+
+- name: Copy and apply MetalLB Resources (IP Pool)
+  ansible.builtin.shell: |
+    kubectl apply -n metallb-system -f - <<EOF
+    apiVersion: metallb.io/v1beta1
+    kind: IPAddressPool
+    metadata:
+      name: ip-pool
+      namespace: metallb-system
+    spec:
+      addresses:
+      - {{ ec2_public_ip.stdout }}/32
+      - {{ ansible_default_ipv4.address }}/32 # Internal IP. If this is not NATted we might ahave issues so maybe double check for identity.
+    EOF
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
+- name: Copy and apply MetalLB Resources (Advert)
+  ansible.builtin.shell: |
+    kubectl apply -n metallb-system -f - <<EOF
+    apiVersion: metallb.io/v1beta1
+    kind: L2Advertisement
+    metadata:
+      name: ip-pool-l2-adv
+      namespace: metallb-system
+    spec:
+      ipAddressPools:
+      - ip-pool
+    EOF
+  environment:
+    KUBECONFIG: /etc/rancher/k3s/k3s.yaml
+
 
 - name: Add Traefik Helm repo
   ansible.builtin.shell: helm repo add traefik https://traefik.github.io/charts
