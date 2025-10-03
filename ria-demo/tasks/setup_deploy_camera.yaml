@@ -25,7 +25,7 @@
       ansible.builtin.shell: |
         kubectl expose deployment camera-backend \
           --port=5000 --target-port=5000 \
-          --name=camera-backend-{{ instance_name }} --type=ClusterIP -n {{ app_namespace }} || true
+          --name=camera-backend-{{ instance_name | lower }} --type=ClusterIP -n {{ app_namespace }} || true
       environment:
         KUBECONFIG: /etc/rancher/k3s/k3s.yaml
 
